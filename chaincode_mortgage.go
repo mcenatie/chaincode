@@ -8,6 +8,7 @@ import (
 	"errors"
 	"strings"
 	"fmt"
+	"time"
 	"encoding/json"
 	//"strconv"
 	"github.com/openblockchain/obc-peer/openchain/chaincode/shim"
@@ -20,11 +21,11 @@ type SimpleChaincode struct {
 func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 	// Initialize mortgage state in ledger
 	key := "myMortgageState"
-	jsonState := `
-{
+	jsonState := `{
     "mortgageDocs": {
         "myDocProperty": {
             "name": "myDocProperty",
+            "status": "open",
             "signatures": {},
             "form": {},
             "access": {
@@ -57,6 +58,40 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
         },
         "myDocBorrower": {
             "name": "myDocBorrower",
+            "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": ""
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                },
+                "A": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+        "myDocEmployment": {
+            "name": "myDocEmployment",
+            "status": "open",
             "signatures": {},
             "form": {},
             "access": {
@@ -76,7 +111,271 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                     "sign": ""
                 },
                 "A": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+            "myDocMonthlyIncomeHousingExpense": {
+            "name": "myDocMonthlyIncomeHousingExpense",
+            "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
                     "read": "OK",
+                    "save": "OK",
+                    "sign": ""
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "A": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+	    "myDocAssetsLiabilities": {
+            "name": "myDocAssetsLiabilities",
+            "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": ""
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "A": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+        "myDocMortgageType": {
+            "name": "myDocMortgageType",
+            "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": ""
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "A": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+        "myDocMortgagePurpose": {
+            "name": "myDocMortgagePurpose",
+	    "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "A": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+	    "myDocDetailsOfTransaction": {
+            "name": "myDocDetailsOfTransaction",
+            "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": ""
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "A": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+	    "myDocForGovMonitoring": {
+            "name": "myDocForGovMonitoring",
+            "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "A": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+            "myDocAcknowledgementAgreement": {
+            "name": "myDocAcknowledgementAgreement",
+            "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "A": {
+                    "read": "",
+                    "save": "",
+                    "sign": ""
+                },
+                "N": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                }
+            }
+        },
+        "myDocPurchaseContract": {
+            "name": "myDocPurchaseContract",
+            "status": "open",
+            "signatures": {},
+            "form": {},
+            "access": {
+                "L": {
+                    "read": "OK",
+                    "save": "",
+                    "sign": ""
+                },
+                "B": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "S": {
+                    "read": "OK",
+                    "save": "OK",
+                    "sign": "OK"
+                },
+                "A": {
+                    "read": "",
                     "save": "",
                     "sign": ""
                 },
@@ -95,14 +394,16 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Borrower Information",
                 "status": "open",
                 "next": "node3",
+                "prev": [],
                 "gridx": 1,
                 "gridy": 0,
-                "docs": ["myDocBorrower"]
+                "docs": ["myDocBorrower","myDocEmployment","myDocMonthlyIncomeHousingExpense","myDocAssetsLiabilities"]
             }, {
                 "id": "node1",
                 "name": "Property Information",
                 "status": "open",
                 "next": "node2",
+                "prev": [],
                 "gridx": 0,
                 "gridy": 1,
                 "docs": ["myDocProperty"]
@@ -111,22 +412,25 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Purchase Contract Information",
                 "status": "closed",
                 "next": "node3",
+                "prev": ["node1"],
                 "gridx": 1,
                 "gridy": 1,
-                "docs": []
+                "docs": ["myDocPurchaseContract"]
             }, {
                 "id": "node3",
                 "name": "Mortgage Application",
                 "status": "closed",
                 "next": "node4",
+                "prev": ["node0", "node2"],
                 "gridx": 2,
                 "gridy": 1,
-                "docs": []
+                "docs": ["myDocMortgageType","myDocMortgagePurpose","myDocDetailsOfTransaction","myDocForGovMonitoring","myDocAcknowledgementAgreement"]
             }, {
                 "id": "node4",
                 "name": "Good Faith Estimate",
                 "status": "closed",
                 "next": "node5",
+                "prev": ["node3"],
                 "gridx": 3,
                 "gridy": 1,
                 "docs": []
@@ -135,6 +439,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Truth in Lending Statement",
                 "status": "closed",
                 "next": "node6",
+                "prev": ["node4"],
                 "gridx": 4,
                 "gridy": 1,
                 "docs": []
@@ -143,6 +448,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Borrower Verification",
                 "status": "closed",
                 "next": "node7",
+                "prev": ["node5"],
                 "gridx": 5,
                 "gridy": 1,
                 "docs": []
@@ -151,6 +457,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Purchase Contract Verification",
                 "status": "closed",
                 "next": "node8",
+                "prev": ["node6"],
                 "gridx": 6,
                 "gridy": 1,
                 "docs": []
@@ -159,6 +466,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Employment Verification",
                 "status": "closed",
                 "next": "node9",
+                "prev": ["node7"],
                 "gridx": 6,
                 "gridy": 2,
                 "docs": []
@@ -167,6 +475,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Rent Verification",
                 "status": "closed",
                 "next": "node10",
+                "prev": ["node8"],
                 "gridx": 5,
                 "gridy": 2,
                 "docs": []
@@ -175,6 +484,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Desktop Underwriter / Loan Prospector Program",
                 "status": "closed",
                 "next": "node11",
+                "prev": ["node9"],
                 "gridx": 4,
                 "gridy": 2,
                 "docs": []
@@ -183,6 +493,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Title Order, Home Insurance",
                 "status": "closed",
                 "next": "node12",
+                "prev": ["node10"],
                 "gridx": 3,
                 "gridy": 2,
                 "docs": []
@@ -191,6 +502,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Home Appraisal",
                 "status": "closed",
                 "next": "node13",
+                "prev": ["node11"],
                 "gridx": 2,
                 "gridy": 2,
                 "docs": []
@@ -199,6 +511,7 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                 "name": "Mortgage Contract",
                 "status": "closed",
                 "next": "",
+                "prev": ["node12"],
                 "gridx": 1,
                 "gridy": 2,
                 "docs": []
@@ -265,7 +578,10 @@ func (t *SimpleChaincode) init(stub *shim.ChaincodeStub, args []string) ([]byte,
                     "gridx": 6.0,
                     "gridy": 2.0
                 }]
-            ]
+            ],
+            "auditing": {
+                "auditLogs": ""
+	    }
         }
     },
     "rootHash": ""
@@ -299,13 +615,12 @@ func (t *SimpleChaincode) getMortgageState(stub *shim.ChaincodeStub, args []stri
 		return nil, myError("Missing documents in mortage state")
 	}
 	for docId := range docs {
-		_, _, rights, err := getMortgageDoc(stub, state, docId, role)
+		_, _, rights, err := getMortgageDoc(state, docId, role)
 		if err != nil {
 			return nil, err
 		}
 
-		op := "read"
-		if rights[op] != "OK" {
+		if rights["read"] != "OK" {
 			// Mask doc
 			var form map[string]interface{}
 			err = json.Unmarshal([]byte(`{}`), &form)
@@ -318,14 +633,66 @@ func (t *SimpleChaincode) getMortgageState(stub *shim.ChaincodeStub, args []stri
 				return nil, myError("Missing dcument '" + docId + "' in mortgage state")
 			}
 			doc["form"] = form
-			fmt.Printf("User of role '" + role + "' has no right to " + op + " document '" + docId + "'; document masked\n")
+			msg := fmt.Sprintf("User of role '" + role + "' has no right to read document '" + docId + "'; document masked")
+			//myAuditLog(state, "INFO", msg)
+			fmt.Printf(msg + "\n")
+		} else {
+			msg := fmt.Sprintf("User of role '" + role + "' read document '" + docId + "'")
+			//myAuditLog(state, "INFO", msg)
+			fmt.Printf(msg + "\n")
 		}
 	}
-	bytes, _ := json.Marshal(state)
+	
+	bytes, err := json.Marshal(state)
+	if err != nil {
+		//return bytes, err
+		return bytes, myError("Cannot marshal mortgage state")
+	}
 
 	fmt.Printf("Returning state...\n")
 	//fmt.Printf("Returning state: " + string(bytes) + "\n")
 	return bytes, nil
+}
+
+func myAuditLog(state map[string]interface{}, prefix string, msg string)(error) {
+	// Get the log
+	processes := state["mortgageProcesses"].(map[string]interface{})
+	if processes == nil {
+		return myError("No mortgage processses in mortgage state")
+	}
+	process := processes["mortgageOrigination"].(map[string]interface{})
+	if process == nil {
+		return myError("No mortgage origination processs in mortgage state")
+	}
+	auditing := process["auditing"].(map[string]interface{})
+	if auditing == nil {
+		return myError("No mortgage processs auditing information in mortgage origination process")
+	}
+	logs := auditing["auditLogs"].(string)
+
+	// Get time prefix
+	t := time.Now()
+	nowStr := t.Format("2006-01-02 15:04:05")
+
+	// Write first line 
+	if logs == "" {
+		logs = "<pre><b style=\"color: white\">" + nowStr + " [INFO]:</b> Audit log started...</pre>"
+	}
+
+	// Get topic prefix
+	color := "white"
+	if prefix == "SIGN" {
+		color = "green"
+	} else if prefix == "REVOKE" {
+		color = "red"
+	} else if prefix == "SAVE" {
+		color = "orange"
+	} else {
+		color = "white"
+	}
+	fmt.Printf(msg + "\n");
+	auditing["auditLogs"] = fmt.Sprintf("%s<pre><b style=\"color: " + color + "\">" + nowStr + " [" + prefix + "]:</b> " + msg + "</pre>", logs)
+	return nil
 }
 
 // Set mortgage document
@@ -339,107 +706,306 @@ func (t *SimpleChaincode) setMortgageDoc(stub *shim.ChaincodeStub, args []string
 	token := args[0]
 	docId := args[1]
 	op := args[2]
-	formStr := args[3]
+	fieldsStr := args[3]
 	signature := args[4]
+
+	if token == "" {
+		return nil, myError("Missing token")
+	}
+	if docId == "" {
+		return nil, myError("Missing document identification")
+	}
+	if op == "" {
+		return nil, myError("Missing operation")
+	}
+	if fieldsStr == "" {
+		return nil, myError("Missing fields information (eg, '{}')")
+	}
+	if signature == "" {
+		return nil, myError("Missing signature")
+	}
 
 	// Get user role
 	role := token[:1]
 
 	// Get submitted mortage fields
-	var form map[string]interface{}
-	err = json.Unmarshal([]byte(formStr), &form)
+	var fields map[string]interface{}
+	err = json.Unmarshal([]byte(fieldsStr), &fields)
 	if err != nil {
-		return nil, myError("Cannot unmarshal form for " + op)
+		return nil, myError("Cannot unmarshal fields for " + op)
 	}
 	state, err := getMortgageStateFull(stub)
 	if err != nil {
 		return nil, err
 	}
-	doc, f, rights, err := getMortgageDoc(stub, state, docId, role)
+	
+	// Get document, form and user access rights
+	doc, form, rights, err := getMortgageDoc(state, docId, role)	
 	if err != nil {
 		return nil, err
 	}
-	if rights[op] == "OK" {
-		if op == "sign" {
-			// Sign document
-			s := doc["signatures"].(map[string]interface{})
-			if s == nil {
-				return nil, myError("No signature provided; " + op + " ignored")
-			}
-			s[role] = signature
-			doc["status"] = "signed"
-			fmt.Printf("Signed " + docId + "\n")
+	
+	// Get doc signatures
+	sigs := doc["signatures"].(map[string]interface{})
+	if sigs == nil {
+		return nil, myError("No signature provided; " + op + " ignored")
+	}	
 
-			// Get process nodes
-			processes := state["mortgageProcesses"].(map[string]interface{})
-			if processes == nil {
-				return nil, myError("No mortgage processses in mortgage state")
-			}
-			process := processes["mortgageOrigination"].(map[string]interface{})
-			if process == nil {
-				return nil, myError("No mortgage origination processs in mortgage state")
-			}
-			nodes := process["nodes"].([]interface{})
-			if nodes == nil {
-				return nil, myError("No mortgage processs nodes in mortgage origination process")
-			}
-
-			// Walk through all nodes and check which have all required docs signed off
-			for _, n := range nodes {
-				var allDocsSigned = true
-				var noDocs = true
-				var nn map[string]interface{}
-				nn = n.(map[string]interface{})
-				dIds := nn["docs"].([]interface{})
-				for _, dId := range dIds {
-					noDocs = false
-					d, _, _, err := getMortgageDoc(stub, state, dId.(string), role)
-					if err != nil {
-						return nil, err
-					}
-					if d["status"] != "signed" {
-						allDocsSigned = false
-					}
-				}
-				if allDocsSigned && !noDocs {
-					// Node n has all docs signed off
-					nn["status"] = "signed"
-					nxt := nn["next"].(string)
-					// Open next 
-					for _, n2 := range nodes {
-						var nn2 map[string]interface{}
-						nn2 = n2.(map[string]interface{})
-						if nxt == nn2["id"].(string) {
-							nn2["status"] = "open"
-							fmt.Printf("Opened next node " + nxt + "\n")
-						}
-					}
-				}
-			}	
-		}
-		// Update fields
-		for k, v := range form {
-			fmt.Printf("Update document fields %s -> %s\n", k, v)
-			f[k] = v;
-		}
-		fmt.Printf("User of role '" + role + " updated document '" + docId + "'!\n")
-	} else {
+	// Check if operation is allowed; who can sign, can also revoke
+	if rights[op] != "OK" && (op == "revo" && rights["sign"] != "OK") {
 		return nil, myError("User of role '" + role + "' has no right to " + op + " document '" + docId + "'")
 	}
 
+	if op == "save" {
+		i, unit, err := updateDocFields(form, fields)
+		if err != nil {
+			return nil, err
+		}
+		msg := fmt.Sprintf("Role '" + role + "' updated document '" + docId + "' (%d " + unit + ")", i)
+		myAuditLog(state, "SAVE", msg)
+		
+	} else if op == "sign" {
+		// Already signed by user?
+		if sigs[role] != nil && sigs[role] != "" {
+			return nil, myError("User of role '" + role + "' signed document '" + docId + "' already; no action")
+		}
+			
+		// Mark doc as signed by user
+		sigs[role] = signature
+
+		_, err = updateDocStatus(token, doc, op)
+		if err != nil {
+			return nil, err
+		}
+
+		i, unit, err := updateDocFields(form, fields)
+		if err != nil {
+			return nil, err
+		}	
+		msg := fmt.Sprintf("User of role '" + role + "' updated and signed document '" + docId + "' (%d " + unit + ")", i)
+		myAuditLog(state, "SIGN", msg)
+		
+		err = updateNodeStatus(token, state, op)
+		if err != nil {
+			return nil, err
+		}
+
+	} else if (op == "revo") {
+		// Cannot revoke if not yet signed by user
+		if sigs[role] == nil || sigs[role] == "" {
+			return nil, myError("User of role '" + role + "' has not signed document '" + docId + "' yet; no action")
+		}
+			
+		// Unmark doc as signed by user
+		sigs[role] = ""
+		doc["status"] = "closed"
+		msg := fmt.Sprintf("Role '" + role + "' revoked signature for document '" + docId + "'")
+		myAuditLog(state, "REVOKE", msg)
+		
+		_, err = updateDocStatus(token, doc, op)
+		if err != nil {
+			return nil, err
+		}
+		
+		err = updateNodeStatus(token, state, op)
+		if err != nil {
+			return nil, err
+		}
+		
+	}
+		
+	_, err = writeMortgageState(stub, state)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+func updateDocFields(form map[string]interface{}, fields map[string]interface{}) (int, string, error) {
+	// Update fields
+	i := 0
+	unit := "fields"
+	for k, v := range fields {
+		fmt.Printf("Update document field: %s -> %s\n", k, v)
+		form[k] = v
+		i++
+		if i == 1 {
+			unit = "field"
+		}
+	}
+	return i, unit, nil
+}
+
+func allNodeDocsSigned(state map[string]interface{}, node map[string]interface{}, role string) (bool, bool) {
+	dIds := node["docs"].([]interface{})
+	noDocs := true
+	allSigned := true
+	// Walk through all docs of node
+	for _, dId := range dIds {
+		d, _, _, err := getMortgageDoc(state, dId.(string), role)
+		if err != nil {
+			fmt.Printf("Document '" + dId.(string) + "' does not exist!\n")
+			continue
+		}
+		noDocs = false
+		
+		if d["status"] != "signed" {
+			allSigned = false
+		}
+	}
+	return allSigned, noDocs
+}
+
+func allPrevNodesSigned(nodes []interface{}, node map[string]interface{}) (bool, bool) {
+	nIds := node["prev"].([]interface{})
+	noPrev := true
+	allSigned := true
+	// Walk through all prev nodes of node
+	for _, nId := range nIds {	
+		prev := findNode(nodes, nId.(string))
+		if prev == nil {
+			continue
+		}
+		noPrev = false
+		
+		if prev["status"] != "signed" {
+			allSigned = false
+		}
+	}
+	return allSigned, noPrev
+}
+
+func updateNodeStatus(token string, state map[string]interface{}, op string) (error) {
+	// Get user role
+	role := token[:1]
+	
+	// Get process nodes to see later if nodes should change status
+	processes := state["mortgageProcesses"].(map[string]interface{})
+	if processes == nil {
+		return myError("No mortgage processses in mortgage state")
+	}
+	process := processes["mortgageOrigination"].(map[string]interface{})
+	if process == nil {
+		return myError("No mortgage origination processs in mortgage state")
+	}
+	nodes := process["nodes"].([]interface{})
+	if nodes == nil {
+		return myError("No mortgage processs nodes in mortgage origination process")
+	}
+	
+	// Walk through all nodes and check which have all required docs signed off
+	for _, n := range nodes {
+		var nn map[string]interface{}
+		nn = n.(map[string]interface{})
+		allDocsSigned, _ := allNodeDocsSigned(state, nn, role)
+		if allDocsSigned && nn["status"] == "open" {
+			// Node nn has all docs signed off
+			fmt.Printf("Node nn has all docs signed off:\n")
+			nn["status"] = "signed"
+			updateNextNode(nodes, nn, "sign")
+		} else if !allDocsSigned && nn["status"] == "signed" {
+			// Node nn has not all docs signed off
+			//fmt.Printf("Node nn has not all docs signed off:\n")
+			nn["status"] = "open"
+			updateNextNode(nodes, nn, "revo")
+		}
+		fmt.Printf("Node " + nn["id"].(string) + " changed to status " + nn["status"].(string) + "\n")
+	}
+	return nil
+}
+
+func findNode(nodes []interface{}, id string)(map[string]interface{}) {
+	// Find node with id
+	// TODO: should change state from list to map data structure
+	var nn map[string]interface{}
+	for _, n := range nodes {
+		nn = n.(map[string]interface{})
+		if id == nn["id"].(string) {
+			return nn
+		}
+	}
+	return nil
+}
+
+func updateNextNode(nodes []interface{}, node map[string]interface{}, op string) (error) {
+	// Get next node
+	nxtId := node["next"].(string)
+	nxt := findNode(nodes, nxtId)
+	if nxt == nil {
+		return nil;
+	}
+	
+	if op == "sign" {
+		// On signing: open next only if all prev nodes of next are signed
+		allPrevSigned, _ := allPrevNodesSigned(nodes, nxt)
+		if allPrevSigned {
+			nxt["status"] = "open"
+		}
+	} else if op == "revo" {
+		// On revoction: always close next
+		nxt["status"] = "close"
+		updateNextNode(nodes, nxt, op)
+	}
+	return nil
+}
+
+func updateDocStatus(token string, doc map[string]interface{}, op string) (string, error){
+	// Get document name
+	docId := doc["name"].(string)
+	if docId == "" {
+		return "", myError("Missing document name")
+	}
+	// Get document access rights
+	access := doc["access"].(map[string]interface{})
+	if access == nil {
+		return "", myError("Missing access rights in document '" + docId)
+	}
+	// Get doc signatures
+	sigs := doc["signatures"].(map[string]interface{})
+	if sigs == nil {
+		return "", myError("No signatures in document docId")
+	}
+	
+	roles := "LBSAN"
+	allSignatures := true	
+	// Determine if everyone signed doc
+	for i := 0; i < len(roles); i++ {
+		ro := roles[i:i+1]
+		rs := access[ro].(map[string]interface{})
+		if rs == nil {
+			return "", myError("Missing access rights for role '" + ro + "' in document '" + docId)
+		}
+		if rs["sign"] == "OK" && (sigs[ro] == nil || sigs[ro] == "") {
+			// Role should sign, but has not yet signed
+			allSignatures = false
+			break
+		}
+	}
+	status := "open"
+	if allSignatures {
+		status = "signed"
+	}
+	doc["status"] = status
+	fmt.Printf("Changed status of document '" + docId + "' to " + status + "\n")
+	return doc["status"].(string), nil
+}
+
+func writeMortgageState(stub *shim.ChaincodeStub, state map[string]interface{}) ([]byte, error) {
 	// Write updated state back to ledger
-	bytes, _ := json.Marshal(state)
+	bytes, err := json.Marshal(state)
+	if err != nil {
+		return bytes, err
+	}
 		
 	//fmt.Printf("State: " + string(bytes) + "\n")
 	fmt.Printf("Writing mortgage state to shared ledger...\n")
-	key := "myMortgageState"
-	err = stub.PutState(key, bytes)
+	err = stub.PutState("myMortgageState", bytes)
 	if err != nil {
-		return nil, myError("Failed to put document '" + docId + "' into ledger")
+		return bytes, myError("Failed to write mortgage state to ledger")
+		//return bytes, err
 	}
-	
-	return nil, nil
-	}
+	return bytes, nil
+}
 
 func myError(msg string) (error) {
 	fmt.Printf(msg + "!\n")
@@ -463,8 +1029,8 @@ func getMortgageStateFull(stub *shim.ChaincodeStub) (map[string]interface{}, err
 	return state, nil
 }
 
-func getMortgageDoc(stub *shim.ChaincodeStub, state map[string]interface{}, docId string, role string) (map[string]interface{}, map[string]interface{}, map[string]interface{}, error) {
-	// Walk through the form fields and update state
+func getMortgageDoc(state map[string]interface{}, docId string, role string) (map[string]interface{}, map[string]interface{}, map[string]interface{}, error) {
+	// Retrieve doc, form and access rights from ledger
 	docs := state["mortgageDocs"].(map[string]interface{})
 	if docs == nil {
 		return nil, nil, nil, myError("Missing documents in mortage state")
@@ -483,7 +1049,7 @@ func getMortgageDoc(stub *shim.ChaincodeStub, state map[string]interface{}, docI
 		return nil, nil, nil, myError("Missing access rights in document '" + docId)
 	}
 	if strings.Index("LBSAN", role) < 0 {
-		return nil, nil, nil, myError("Bad rol '" + role)
+		return nil, nil, nil, myError("Bad role '" + role + "'")
 	}
 	rights := access[role].(map[string]interface{})
 	if rights == nil {
